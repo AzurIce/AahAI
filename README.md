@@ -1,17 +1,14 @@
 # AahAI
-## 时间节点
 
-```mermaid
-gantt
-    title 第三小组任务进度
-    dateFormat  YYYY-MM-DD
-    section 整体项目
-    项目											  :2024-06-28, 2024-07-09
-    组队立项           								 :a1, 2024-06-28, 1d
-    立项汇报           								 :a2, 2024-06-29, 1d
-    中期检查                                         :a3, 2024-07-03, 1d
-    项目答辩           								 :a4, 2024-07-09, 1d
-```
+## 模型描述
 
-## 概述
+- **deploy_direction_cls.onnx**：用于识别战斗干员的方向（四分类模型）。
+- **operators_det.onnx**：用于检测战斗干员。
+- **skill_ready_cls.onnx**：用于识别战斗技能是否准备好（二分类模型）。
+
+## 文件说明
+
+### skill_ready_cls_test.py
+
+该脚本用于测试 `skill_ready_cls.onnx` 模型，判断战斗技能是否准备好。
 
