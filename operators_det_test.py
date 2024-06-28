@@ -37,6 +37,11 @@ output = [[] for _ in range(output_shape[1])]
 for i in range(output_shape[1]):
     output[i] = raw_output[i * output_shape[2]:(i + 1) * output_shape[2]]
 
+print(output[-1])
+print(len(output[-1]))
+
+exit(0)
+
 # 根据模型输出生成结果
 results = []
 confidences = output[-1]
