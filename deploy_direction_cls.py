@@ -7,7 +7,7 @@ onnx_model_path = 'resources/models/deploy_direction_cls.onnx'
 ort_session = onnxruntime.InferenceSession(onnx_model_path)
 
 # 图形处理部分
-input_image_path = 'resources/input/direction/1.png'
+input_image_path = 'resources/input/direction/2.png'
 input_image = PIL.Image.open(input_image_path)
 # 调整图像大小为模型期望的输入尺寸，这里假设模型期望输入为 (64, 64)
 input_image = input_image.resize((96, 96))
