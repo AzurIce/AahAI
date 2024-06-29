@@ -40,7 +40,7 @@ for i in range(output_shape[1]):
 print(output[-1])
 print(len(output[-1]))
 
-exit(0)
+# exit(0)
 
 # 根据模型输出生成结果
 results = []
