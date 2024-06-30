@@ -29,7 +29,7 @@ for filename in os.listdir(folder_path):
             result_file_path = os.path.join(destination_path, label_name)
 
             with open(result_file_path, 'w') as f:
-                line = f"{index} 0.500000 0.500000 0.800000 0.990000\n"
+                line = f"{index} 0.500000 0.500000 0.999900 0.999900\n"
                 f.write(line)
 
             counter += 1
