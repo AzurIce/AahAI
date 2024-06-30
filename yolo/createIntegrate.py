@@ -6,7 +6,7 @@ from tqdm import tqdm
 def create_integrate_image(output_image_path, labels_file_path, divisor, remainder):
     # 定义单个小图片的大小和大图片的大小
     small_image_size = (90, 90)  # 小图片的大小为 100x100
-    big_image_size = (360, 360)    # 大图片的大小为 400x400
+    big_image_size = (270, 270)    # 大图片的大小为 400x400
 
     # 图片所在的目录
     source_directory = 'ArkNights/images/train/'
@@ -29,7 +29,7 @@ def create_integrate_image(output_image_path, labels_file_path, divisor, remaind
     # 准备小图片列表
     small_images = []
     for filename in os.listdir(source_directory):
-        if filename.endswith('.png') and count_index_img < 16:
+        if filename.endswith('.png') and count_index_img < 9:
             # 构建完整的文件路径
             full_path = os.path.join(source_directory, filename)
             # 解析和提取信息
@@ -80,8 +80,8 @@ def create_integrate_image(output_image_path, labels_file_path, divisor, remaind
             labels.append((matched_info['index'],
                            center_x / big_image_size[0],
                            center_y / big_image_size[1],
-                           0.250000,
-                           0.250000))
+                           0.7 * 0.250000,
+                           0.85 * 0.250000))
         else:
             labels.append(("image", idx, center_x, center_y, "failure"))
 
@@ -99,7 +99,7 @@ def create_integrate_image(output_image_path, labels_file_path, divisor, remaind
 
 
 if __name__ == "__main__":
-    for i in tqdm(range(10, 100), desc="Outer Loop"):  # 外层循环，范围从1到3
+    for i in tqdm(range(10, 36), desc="Outer Loop"):  # 外层循环，范围从1到3
         for j in tqdm(range(1, 10), desc="Inner Loop", leave=False):  # 内层循环，范围从1到2
             output_image_path = f"extraDatasets/image/16_{i}_{j}_integrate.png"
             labels_file_path = f"extraDatasets/label/16_{i}_{j}_integrate.txt"

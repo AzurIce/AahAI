@@ -1,5 +1,11 @@
 /target
 /runs
+
+*.png
+*.txt
 /yolo/data
-/yolo/ArkNights
+/yolo/HistogramData
 /yolo/extraDatasets
+/yolo/ArkNights
+/yolo/ArkNightsSingle
+

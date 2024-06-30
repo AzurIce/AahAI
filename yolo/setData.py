@@ -20,6 +20,7 @@ for filename in os.listdir(folder_path):
 
             if tempName != name:
                 index += 1
+
             tempName = name
 
             image_name = f"{formatted_id}_{index}_{name}_{counter}.png"
@@ -36,3 +37,4 @@ for filename in os.listdir(folder_path):
             print(f"Copied {filename} to {destination_file} : {counter} done.")
 
             counter += 1
+
