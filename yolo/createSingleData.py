@@ -41,9 +41,9 @@ def create_single_image():
 
         labels.append((index,
                        0.5,
-                       0.5,
-                       0.45,
-                       0.45))
+                       0.55,
+                       0.55,
+                       0.55))
 
         with open(labels_file_path, 'w') as f:
             for label in labels:
