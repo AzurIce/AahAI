@@ -3,7 +3,7 @@ from PIL import Image
 from tqdm import tqdm
 
 
-def create_integrate_image(output_image_path, labels_file_path, divisor, remainder):
+def create_integrate_image(output_image_path, labels_file_path, remainder):
     # 定义单个小图片的大小和大图片的大小
     small_image_size = (90, 90)  # 小图片的大小为 100x100
     big_image_size = (270, 270)    # 大图片的大小为 400x400
@@ -17,7 +17,7 @@ def create_integrate_image(output_image_path, labels_file_path, divisor, remaind
     # labels_file_path = 'extraDatasets/label/labels.txt'
     #
     # # 取样时的除数和余数
-    # divisor = 10
+    divisor = 90
     # remainder = 1
 
     info = []  # 单一图片信息
@@ -99,8 +99,8 @@ def create_integrate_image(output_image_path, labels_file_path, divisor, remaind
 
 
 if __name__ == "__main__":
-    for i in tqdm(range(10, 36), desc="Outer Loop"):  # 外层循环，范围从1到3
-        for j in tqdm(range(1, 10), desc="Inner Loop", leave=False):  # 内层循环，范围从1到2
+    for i in tqdm(range(1, 3), desc="Outer Loop"):  # 外层循环，范围从1到3
+        for j in tqdm(range(1, 90), desc="Inner Loop", leave=False):  # 内层循环，范围从1到2
             output_image_path = f"extraDatasets/image/16_{i}_{j}_integrate.png"
             labels_file_path = f"extraDatasets/label/16_{i}_{j}_integrate.txt"
-            create_integrate_image(output_image_path, labels_file_path, i, j)
+            create_integrate_image(output_image_path, labels_file_path, j)

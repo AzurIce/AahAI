@@ -2,8 +2,8 @@ import os
 from PIL import Image
 from tqdm import tqdm
 
-image_folder_path = "extraDatasets/image"
-label_folder_path = "extraDatasets/label"
+image_folder_path = "singleDataSets/image"
+label_folder_path = "singleDataSets/label"
 image_result_path = "HistogramData/image"
 label_result_path = "HistogramData/label"
 
@@ -19,7 +19,7 @@ for filename in tqdm(os.listdir(image_folder_path)):
         with open(full_label_path, 'r') as label_file:
             label_content = label_file.read()
 
-        for i in range(60, 81, 5):
+        for i in range(60, 81, 10):
             dark_factor = i / 100.0
             dark_image = Image.eval(image, lambda x: x * dark_factor)
             dark_image_filename = f"{base_filename}_dark_{i}.png"
