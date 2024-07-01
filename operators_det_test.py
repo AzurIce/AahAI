@@ -47,7 +47,7 @@ results = []
 confidences = output[-1]
 for i in range(len(confidences)):
     score = confidences[i]
-    if score < 0.3:  # 阈值设定
+    if score < 0.0001:  # 阈值设定
         continue
 
     center_x = int(output[0][i] / (640 / image.shape[1]))
