@@ -1,5 +1,6 @@
 use tract_onnx::prelude::*;
 use image::DynamicImage;
+mod level;
 
 #[derive(Debug)]
 pub struct Detection {
