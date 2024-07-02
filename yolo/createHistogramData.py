@@ -2,8 +2,8 @@ import os
 from PIL import Image
 from tqdm import tqdm
 
-image_folder_path = "singleDataSets/image"
-label_folder_path = "singleDataSets/label"
+image_folder_path = "ArkNights/images/train"
+label_folder_path = "ArkNights/labels/train"
 image_result_path = "HistogramData/image"
 label_result_path = "HistogramData/label"
 

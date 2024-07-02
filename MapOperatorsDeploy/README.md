@@ -62,3 +62,4 @@ image = f"{index}_{name}_{x}_{y}_{direction}.png"
 label = f"{index}_{name}_{x}_{y}_{direction}.txt"
 ```
 
+6-3是1-3跑出来的
