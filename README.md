@@ -5,6 +5,7 @@
 - **deploy_direction_cls.onnx**：用于识别战斗干员的方向（四分类模型）。
 - **operators_det.onnx**：用于检测战斗干员。
 - **skill_ready_cls.onnx**：用于识别战斗技能是否准备好（二分类模型）。
+- **ocr模型**:调用paddlepaddle包预测。
 
 ## 模型基本信息
 
