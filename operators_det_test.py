@@ -15,7 +15,7 @@ session = ort.InferenceSession("resources/models/operators_det.onnx")
 
 
 # 读取并预处理输入图像
-image_path = "resources/input/operators_det/2.png"
+image_path = "resources/input/operators_det/1.png"
 image = cv2.imread(image_path)
 image_resized = cv2.resize(image, (640, 640), interpolation=cv2.INTER_AREA)
 input_data = image_to_tensor(image_resized)
@@ -69,7 +69,7 @@ cv2.imshow("Detection Results", image)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
-output_path = 'resources/output/operators_det/operators_det_2.png'  # Specify the path where you want to save the image
+output_path = 'resources/output/operators_det/operators_det_1.png'  # Specify the path where you want to save the image
 cv2.imwrite(output_path, image)  # Save the image to the specified path
 
 print(f"Image saved successfully at {output_path}")

@@ -1,8 +1,6 @@
 import os
 import pandas as pd
-import shutil
-import re
-import csv
+
 
 # 文件夹路径，根据你实际的文件夹路径进行修改
 folder_path = 'test'
@@ -12,7 +10,6 @@ counter = 1
 
 # 读取 CSV 文件到 DataFrame
 df = pd.read_csv('test/map_data.csv')
-
 
 for filename in os.listdir(image_path):
     if filename.endswith('.png'):
@@ -37,7 +34,7 @@ for filename in os.listdir(image_path):
         result_file_path = os.path.join(label_path, label_filename)
         #
         with open(result_file_path, 'w') as f:
-            line = f"{index} {index_x} {index_y} 0.06 0.1475"
+            line = f"{index} {str(index_x)} {str(index_y)} 0.06 0.1475\n"
             f.write(line)
 
         print(f"{counter} labels done")

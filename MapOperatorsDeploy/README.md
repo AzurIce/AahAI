@@ -63,3 +63,58 @@ label = f"{index}_{name}_{x}_{y}_{direction}.txt"
 ```
 
 6-3是1-3跑出来的
+
+
+
+# 田佳文请认真阅读以下内容
+
+### 地图数据参考
+
+![image-20240702163102818](README.assets/image-20240702163102818.png)
+
+工作内容：
+
+1.录制一段自己打1-4的视频，干员为视频中的这10个，3星要求全部精一，医疗车是黄色的
+
+2.对于视频中的任何一帧，截图（1920 x 1080 大小**严格要求**），命名如下：
+
+`id_name_x_y_direction`
+
+```
+# direction表示朝向，从右开始顺时针以此为0 1 2 3
+# id name对照表：
+names:
+  0:Lancet
+  1:yedao
+  2:heijiao
+  3:xunlinzhe
+  4:dulin
+  5:meilansha
+  6:lingyu
+  7:shiduhuade
+  8:ansaier
+  9:keluosi
+```
+
+举例：
+
+![6_lingyu_4_3_1](README.assets/6_lingyu_4_3_1.png)
+
+6_lingyu_4_3_1.png
+
+6号lingyu位于x=4，y=3的格子，朝向为1
+
+## 问题来了：如果同时部署了多个干员怎么办
+
+比如：
+
+![2](README.assets/2.png)
+
+那就搞两张这个图片，分别命名为：
+
+`1_yedao_4_2_0.png` 和 `0_Lancet_5_5_3.png`
+
+![4](README.assets/4.png)
+
+小练习：上面的这张图片需要___张截图，除了`1_yedao_4_2_0.png` 和 `0_Lancet_5_5_3.png`还需要哪些命名？（填空，每空半条命）
+

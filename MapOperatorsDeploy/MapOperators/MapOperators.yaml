@@ -5,13 +5,13 @@ test: # test images (optional)
 
 # Classes
 names:
-  0:Lancet
-  1:yedao
-  2:heijiao
-  3:xunlinzhe
-  4:dulin
-  5:meilansha
-  6:lingyu
-  7:shiduhuade
-  8:ansaier
-  9:keluosi
+  0: Lancet
+  1: yedao
+  2: heijiao
+  3: xunlinzhe
+  4: dulin
+  5: meilansha
+  6: lingyu
+  7: shiduhuade
+  8: ansaier
+  9: keluosi
