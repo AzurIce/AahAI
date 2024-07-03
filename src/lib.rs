@@ -187,7 +187,6 @@ mod tests {
             }
             Err(e) => eprintln!("无法加载图片: {}", e),
         }
-        
     }
 
     #[test]//测试方位 "right" "down" "left" "up" -> 0 1 2 3
@@ -206,7 +205,6 @@ mod tests {
             }
             Err(e) => eprintln!("无法加载图片: {}", e),
         }
-        
     }
 
     #[test]
@@ -232,8 +230,6 @@ mod tests {
             }
             Err(e) => eprintln!("无法加载图片: {}", e),
         }
-
-        
     }
 
 
