@@ -56,8 +56,8 @@ def draw_boxes(fn_image_file, fn_txt_file):
 
 
 # Example usage:
-image_file = 'test/image/7_shiduhuade_3_1_0.png'
-txt_file = 'test/label/7_shiduhuade_3_1_0.txt'
+image_file = 'test/testImage/0_Lancet_7_5_3_001653.png'
+txt_file = 'test/0_Lancet_7_5_3_001653.txt'
 
 # image_file = 'test/image/6_lingyu_4_3_3.png'
 # txt_file = 'test/label/6_lingyu_4_3_3.txt'

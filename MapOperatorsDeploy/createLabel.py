@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-
+from tqdm import tqdm
 
 # 文件夹路径，根据你实际的文件夹路径进行修改
 folder_path = 'test'
@@ -11,7 +11,8 @@ counter = 1
 # 读取 CSV 文件到 DataFrame
 df = pd.read_csv('test/map_data.csv')
 
-for filename in os.listdir(image_path):
+
+for filename in tqdm(os.listdir(image_path)):
     if filename.endswith('.png'):
         # 分割文件名
         parts = filename.split('_')

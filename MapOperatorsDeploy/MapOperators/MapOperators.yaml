@@ -1,6 +1,6 @@
 path: /BJTU/大三第二学期/AI-AahAI/Uitralttics-YOLO/ultralytics/datasets/MapOperators # dataset root dir
 train: images/train # train images (relative to 'path') 998 images
-val: images/train # val images (relative to 'path') 998 images
+val: images/val # val images (relative to 'path') 998 images
 test: # test images (optional)
 
 # Classes
@@ -15,3 +15,17 @@ names:
   7: shiduhuade
   8: ansaier
   9: keluosi
+  10: 12f
+  11: fen
+  12: paopuka
+  13: yanrong
+  14: zilan
+  15: xiangcao
+  16: yuejianye
+  17: bandian
+  18: kati
+  19: migelu
+  20: andeqieer
+  21: kongbao
+  22: furong
+  23: taojinniang

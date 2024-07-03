@@ -42,17 +42,41 @@
 
 ```yaml
 names:
-  0:Lancet
-  1:yedao
-  2:heijiao
-  3:xunlinzhe
-  4:dulin
-  5:meilansha
-  6:lingyu
-  7:shiduhuade
-  8:ansaier
-  9:keluosi
+  0: Lancet
+  1: yedao
+  2: heijiao
+  3: xunlinzhe
+  4: dulin
+  5: meilansha
+  6: lingyu
+  7: shiduhuade
+  8: ansaier
+  9: keluosi
+  10: 12f
+  11: fen
+  12: paopuka
+  13: yanrong
+  14: zilan
+  15: xiangcao
+  16: yuejianye
+  17: bandian
+  18: kati
+  19: migelu
+  20: andeqieer
+  21: kongbao
+  22: furong
+  23: taojinniang
 ```
+
+图片：
+
+![image-20240703150545813](README.assets/image-20240703150545813.png)
+
+![image-20240703150628220](README.assets/image-20240703150628220.png)
+
+
+
+
 
 image/label 命名表达式
 
