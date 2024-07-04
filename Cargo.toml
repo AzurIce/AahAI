@@ -11,3 +11,11 @@ tract-onnx = "0.21.5"
 uuid = { version = "1", features = ["v4"] }
 regex = "1.5"
 encoding = "0.2.33"
+
+rten = "0.10.0"
+rten-imageio = "0.10.0"
+rten-imageproc = "0.10.0"
+rten-tensor = "0.10.0"
+
+[profile.test]
+inherits = "release"

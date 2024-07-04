@@ -2,3 +2,6 @@
 /runs
 /yolo/data
 /yolo/ArkNights
+
+.idea
+.venv
