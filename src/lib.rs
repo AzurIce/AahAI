@@ -1,43 +1,48 @@
 //! 模型列表：
 //! - [`get_skill_ready`]: 模型名 `skill_ready_cls.onnx`
 //! - [`get_direction`]: 模型名 `deploy_direction_cls.onnx`
-//! - [`ocr`]: 掉包!!!
+//! - [`ocr`] :  掉包!!!
 //! - [`get_blood`]: 模型名 `operators_det.rten`
+//! 结构体列表
+//! - [`Detection`] : 血条检测结果
+//!                 label: 检测到的标签
+//!                 score: 置信度
+//!                 x1: 左上角x坐标
+//!                 y1: 左上角y坐标
+//!                 x2: 右下角x坐标
+//!                 y2: 右下角y坐标
+//! - [`OcrResult`] : ocr结果
+//!                 bbox: 文本框坐标
+//!                 text: 文本内容
+//!                 confidence: 置信度
+
 use encoding::all::GBK;
 use encoding::{DecoderTrap, Encoding};
-use image::{open, DynamicImage};
+use image:: DynamicImage;
 use regex::Regex;
 use std::io::Cursor;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use tract_onnx::prelude::*;
 use uuid::Uuid;
-use std::{error::Error, fs};
+use std::error::Error;
 use rten::{
     ops::{non_max_suppression, BoxOrder},
     Dimension, FloatOperators, Model, TensorPool,
 };
-use rten_imageio::{read_image};
-use rten_imageproc::{Painter, Rect};
+use rten_imageio::read_image;
+use rten_imageproc::Rect;
 use rten_tensor::{prelude::*, NdTensor, Storage};
 
 
-
-
-// const SKILL_READY_CLS_MODEL: &[u8] = include_bytes!("../resources/models/skill_ready_cls.onnx");
-// const DEPLOY_DIRECTION_CLS_MODEL: &[u8] = include_bytes!("../resources/models/deploy_direction_cls.onnx");
-// const OPERATORS_DET_MODEL: &[u8] = include_bytes!("../resources/models/operators_det.onnx");
-// const OPERATORS_DET_MODEL1: &[u8] = include_bytes!("../resources/models/operators_det.rten");
-
-#[derive(Debug)]
-pub struct BloodPosition {
-    pub x: f32,
-    pub y: f32,
-    pub w: f32,
-    pub h: f32,
+pub struct Detection {
+    pub label: String,
     pub score: f32,
+    pub x1: f32,
+    pub y1: f32,
+    pub x2: f32,
+    pub y2: f32,
 }
-
 #[derive(Debug)]
 pub struct OcrResult {
     pub bbox: Vec<[f64; 2]>,
@@ -106,54 +111,6 @@ pub fn get_direction<P: AsRef<Path>>(image: &DynamicImage, res_dir: P) -> TractR
     run_onnx_model(model_path, image, 96)
 }
 
-// /// 检测血条
-// pub fn get_blood<P: AsRef<Path>>(image: &DynamicImage, res_dir: P) -> TractResult<Vec<BloodPosition>> {
-//     // 加载ONNX模型
-//     let mut cursor = Cursor::new(OPERATORS_DET_MODEL);
-//     let model = tract_onnx::onnx().model_for_read(&mut cursor)?;
-
-//     // 设置输入形状
-//     let input_shape: [usize; 4] = [1, 3, 640, 640];
-//     let model =
-//         model.with_input_fact(0, InferenceFact::dt_shape(f32::datum_type(), input_shape))?;
-//     let model = model.into_optimized()?.into_runnable()?;
-
-//     // 将图像转换为模型输入的张量
-//     let input_data = image_to_tensor(&image, 640);
-
-//     // 运行模型进行推理
-//     let result = model.run(tvec!(input_data.into()))?;
-//     let output = result[0].to_array_view::<f32>()?;
-
-//     // 解析模型输出
-//     let mut results = Vec::new();
-//     let output_shape = output.shape();
-//     for i in 0..output_shape[1] {
-//         let score = output[[0, i, 4]];
-//         if score > 0.3 {
-//             // 过滤置信度较低和不合理的检测框
-//             // 获取检测框的中心坐标和尺寸
-//             // let center_x = output[[0, i, 0]] * img.width() as f32 / 640.0;  // 中心x坐标
-//             // let center_y = output[[0, i, 1]] * img.height() as f32 / 640.0;  // 中心y坐标
-//             // let w = output[[0, i, 2]] * img.width() as f32 / 640.0;  // 宽度
-//             // let h = output[[0, i, 3]] * img.height() as f32 / 640.0;  // 高度
-//             let center_x = output[[0, i, 0]]; // 中心x坐标
-//             let center_y = output[[0, i, 1]]; // 中心y坐标
-//             let w = output[[0, i, 2]]; // 宽度
-//             let h = output[[0, i, 3]]; // 高度
-
-//             // 将中心坐标转换为左上角坐标
-//             let x = center_x - w / 2.0; // 左上角x坐标
-//             let y = center_y - h / 2.0; // 左上角y坐标
-
-//             // 存储检测结果
-//             results.push(BloodPosition { x, y, w, h, score });
-//         }
-//     }
-
-//     Ok(results)
-// }
-
 /// ocr预测
 pub fn ocr(image: &DynamicImage) -> Result<Vec<OcrResult>, Box<dyn std::error::Error>> {
     // 生成一个唯一的文件名
@@ -213,76 +170,71 @@ pub fn ocr(image: &DynamicImage) -> Result<Vec<OcrResult>, Box<dyn std::error::E
 }
 
 /// get_blood
-pub fn get_blood(image: &DynamicImage) -> Result<(), Box<dyn Error>> {
+pub fn get_blood<P: AsRef<Path>>(image: &DynamicImage, res_dir: P) -> Result<Vec<Detection>, Box<dyn Error>> {
     // 生成一个唯一的文件名
     let image_path = format!("{}.png", Uuid::new_v4());
 
     // 将DynamicImage保存到文件
     image.save(&image_path)?;
 
-    let model = Model::load_file("./resources/models/operators_det.rten")?;
+    // 获取模型路径
+    let model_path = get_model_path(res_dir, "operators_det.rten");
 
+    // 加载目标检测模型
+    let model = Model::load_file(model_path)?;
+
+    // 读取图像
     let image = read_image(&image_path)?;
 
-    let labels: Vec<_> = fs::read_to_string("./resources/models/arknights.names")?
-        .lines()
-        .map(|s| s.to_string())
-        .collect();
+    // 定义标签内容
+    let labels = vec!["blood".to_string()];
 
-    // Save a copy of the input before normalization and scaling
-    let mut annotated_image = Some(image.clone());
-
+    // 获取图像高度和宽度
     let [_, image_height, image_width] = image.shape();
 
+    // 准备输入张量
     let mut image = image.as_dyn().to_tensor();
-    image.insert_axis(0); // Add batch dim
+    image.insert_axis(0); // 增加批量维度
 
+    // 获取模型输入形状
     let input_shape = model
         .input_shape(0)
         .ok_or("model does not specify expected input shape")?;
     let (input_h, input_w) = match &input_shape[..] {
         &[_, _, Dimension::Fixed(h), Dimension::Fixed(w)] => (h, w),
-
-        // If dimensions are not fixed, use the defaults from when this
-        // example was created.
-        _ => (640, 640),
+        _ => (640, 640), // 如果维度未固定，使用默认值
     };
     let image = image.resize_image([input_h, input_w])?;
 
+    // 获取模型输入和输出节点ID
     let input_id = model.node_id("images")?;
     let output_id = model.node_id("output0")?;
 
+    // 运行模型并获取输出
     let [output] = model.run_n(
         vec![(input_id, image.view().into())].as_slice(),
         [output_id],
         None,
     )?;
 
-    // Output format is [N, 84, B] where `B` is the number of boxes. The second
-    // dimension contains `[x, y, w, h, class_0 ... class 79]` where `(x, y)`
-    // are the coordinates of the box center, `(h, w)` are the box size and
-    // the `class_{i}` fields are class probabilities.
+    // 处理模型输出
     let output: NdTensor<f32, 3> = output.try_into()?;
     let [_batch, box_attrs, _n_boxes] = output.shape();
     println!("{:?}", box_attrs);
-    // assert!(box_attrs == 84);
 
     let model_in_h = image.size(2);
     let model_in_w = image.size(3);
     let scale_y = image_height as f32 / model_in_h as f32;
     let scale_x = image_width as f32 / model_in_w as f32;
 
-    // [batch, n_boxes, coord]
+    // 提取边框和分数
     let boxes = output.slice::<3, _>((.., ..4, ..)).permuted([0, 2, 1]);
-
-    // [batch, n_classes, n_boxes]. The `n_boxes` coord is last because that
-    // is what `non_max_suppression` requires.
     let scores = output.slice::<3, _>((.., 4.., ..));
 
     let iou_threshold = 0.3;
     let score_threshold = 0.25;
 
-    // nms_boxes is [n_selected, 3];
+    // 非极大值抑制
     let nms_boxes = non_max_suppression(
         &TensorPool::new(),
         boxes.view(),
@@ -294,17 +246,10 @@ pub fn get_blood(image: &DynamicImage) -> Result<(), Box<dyn Error>> {
     )?;
     let [n_selected_boxes, _] = nms_boxes.shape();
 
-    let mut painter = annotated_image
-        .as_mut()
-        .map(|img| Painter::new(img.view_mut()));
-    let stroke_width = 2;
-
-    if let Some(painter) = painter.as_mut() {
-        painter.set_stroke([1., 0., 0.]);
-        painter.set_stroke_width(stroke_width);
-    }
-
     println!("Found {n_selected_boxes} objects in image.");
+
+    // 收集检测结果
+    let mut detections = Vec::new();
 
     for b in 0..n_selected_boxes {
         let [batch_idx, cls, box_idx] = nms_boxes.slice(b).to_array();
@@ -319,15 +264,11 @@ pub fn get_blood(image: &DynamicImage) -> Result<(), Box<dyn Error>> {
         );
 
         let int_rect = rect.integral_bounding_rect().clamp(Rect::from_tlhw(
-            stroke_width as i32,
-            stroke_width as i32,
-            image_height as i32 - 2 * stroke_width as i32,
-            image_width as i32 - 2 * stroke_width as i32,
+            2 as i32,
+            2 as i32,
+            image_height as i32 - 4 as i32,
+            image_width as i32 - 4 as i32,
         ));
-
-        if let Some(painter) = painter.as_mut() {
-            painter.draw_polygon(&int_rect.corners());
-        }
 
         let label = unsafe {
             labels
@@ -336,19 +277,25 @@ pub fn get_blood(image: &DynamicImage) -> Result<(), Box<dyn Error>> {
                 .unwrap_or("unknown")
         };
 
-        println!(
-            "object: {label} score: {score:.3} left: {} top: {} right: {} bottom: {} box index: {box_idx}",
-            int_rect.left(),
-            int_rect.top(),
-            int_rect.right(),
-            int_rect.bottom()
-        );
+        detections.push(Detection {
+            label: label.to_string(),
+            score,
+            x1: int_rect.left() as f32,
+            y1: int_rect.top() as f32,
+            x2: int_rect.right() as f32,
+            y2: int_rect.bottom() as f32,
+        });
+
+
     }
+
     // 删除临时文件
     std::fs::remove_file(image_path)?;
 
-    Ok(())
+    Ok(detections)
 }
+
+
 
 #[cfg(test)]
 mod tests {
@@ -393,31 +340,6 @@ mod tests {
         // }
     }
 
-    // #[test]
-    // fn test_get_blood() {
-    //     let image_path = "resources/input/operators_det/2.png";
-    //     println!("加载图片: {}", image_path);
-
-    //     match open(image_path) {
-    //         Ok(img) => {
-    //             let img = img.to_rgb8();
-    //             let img = DynamicImage::ImageRgb8(img);
-    //             match get_blood(&img) {
-    //                 Ok(detections) => {
-    //                     for detection in detections {
-    //                         println!(
-    //                             "检测到的目标: 位置 ({}, {}), 宽度 {}, 高度 {}, 置信度 {:.2}",
-    //                             detection.x, detection.y, detection.w, detection.h, detection.score
-    //                         );
-    //                     }
-    //                 }
-    //                 Err(e) => eprintln!("运行模型时出错: {:?}", e),
-    //             }
-    //         }
-    //         Err(e) => eprintln!("无法加载图片: {}", e),
-    //     }
-    // }
-
     #[test] //测试ocr
     fn test_ocr() {
         let image_path = "resources/input/ocr/11.jpg";
@@ -441,20 +363,28 @@ mod tests {
     }
     
     #[test] //测试foo
-    fn get_blood() {
-        let image_path = "resources/input/operators_det/1.png";
+    fn test_get_blood() {
+        let image_path = "model/resources/input/operators_det/1.png";
         println!("加载图片: {}", image_path);
 
-        // match open(image_path) {
-        //     Ok(img) => {
-        //         let img = img.to_rgb8();
-        //         let img = DynamicImage::ImageRgb8(img);
-        //         match foo(&img) {
-        //             Ok(_) => println!("foo 测试成功"),
-        //             Err(e) => eprintln!("foo 测试失败: {:?}", e),
-        //         }
-        //     }
-        //     Err(e) => eprintln!("无法加载图片: {}", e),
-        // }
+        match open(image_path) {
+            Ok(img) => {
+                let img = img.to_rgb8();
+                let img = DynamicImage::ImageRgb8(img);
+                match get_blood(&img, res_dir) {
+                    Ok(detections) => {
+                        // 输出检测结果
+                        for detection in detections {
+                            println!(
+                                "Label: {}, Score: {:.3}, Left: {}, Top: {}, Right: {}, Bottom: {}",
+                                detection.label, detection.score, detection.x1, detection.y1, detection.x2, detection.y2
+                            );
+                        }
+                    },
+                    Err(e) => eprintln!("foo 测试失败: {:?}", e),
+                }
+            }
+            Err(e) => eprintln!("无法加载图片: {}", e),
+        }
     }
 }
