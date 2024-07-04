@@ -20,7 +20,6 @@ use encoding::all::GBK;
 use encoding::{DecoderTrap, Encoding};
 use image:: DynamicImage;
 use regex::Regex;
-use std::io::Cursor;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use tract_onnx::prelude::*;
@@ -299,7 +298,7 @@ pub fn get_blood<P: AsRef<Path>>(image: &DynamicImage, res_dir: P) -> Result<Vec
 
 #[cfg(test)]
 mod tests {
-    const res_dir: &str = "../azur-arknights-helper/resources";
+    const RES_DIR: &str = "../azur-arknights-helper/resources";
     // use std::time::Instant;
     use super::*;
     use image::open;
@@ -371,7 +370,7 @@ mod tests {
             Ok(img) => {
                 let img = img.to_rgb8();
                 let img = DynamicImage::ImageRgb8(img);
-                match get_blood(&img, res_dir) {
+                match get_blood(&img, RES_DIR) {
                     Ok(detections) => {
                         // 输出检测结果
                         for detection in detections {
