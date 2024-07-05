@@ -16,6 +16,7 @@ rten = "0.10.0"
 rten-imageio = "0.10.0"
 rten-imageproc = "0.10.0"
 rten-tensor = "0.10.0"
+nalgebra = "0.33.0"
 
 [profile.test]
 inherits = "release"
