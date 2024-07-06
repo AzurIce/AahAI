@@ -1,0 +1,4 @@
+spine-to-png:
+    spine-export-cli -e sequence -o "exports/back/{assetName}/{animationName}" "./spines/back"
+
+    spine-export-cli -e sequence -o "exports/front/{assetName}/{animationName}" "./spines/front"
