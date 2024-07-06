@@ -3,6 +3,7 @@
 //! - [`get_direction`]: 模型名 `deploy_direction_cls.onnx`
 //! - [`ocr`] :  掉包!!!
 //! - [`get_blood`]: 模型名 `operators_det.rten`
+//! - [`detect_all`] :  一次性检测所有
 //! 结构体列表
 //! - [`Detection`] : 血条检测结果
 //!                 label: 检测到的标签
@@ -15,6 +16,11 @@
 //!                 bbox: 文本框坐标
 //!                 text: 文本内容
 //!                 confidence: 置信度
+//! - [`FullDetection`] : 一次性检测结果
+//!                detection: 血条检测结果
+//!                direction: 方向
+//!                skill_ready: 技能状态
+ 
 
 use encoding::all::GBK;
 use encoding::{DecoderTrap, Encoding};
@@ -33,6 +39,11 @@ use rten_imageio::read_image;
 use rten_imageproc::Rect;
 use rten_tensor::{prelude::*, NdTensor, Storage};
 
+pub struct FullDetection {
+    pub detection: Detection,
+    pub direction: usize,
+    pub skill_ready: usize,
+}
 
 pub struct Detection {
     pub label: String,
@@ -294,7 +305,54 @@ pub fn get_blood<P: AsRef<Path>>(image: &DynamicImage, res_dir: P) -> Result<Vec
     Ok(detections)
 }
 
+pub fn detect_all<P: AsRef<Path>>(image: &DynamicImage, res_dir: P) -> Result<Vec<FullDetection>, Box<dyn Error>> {
+    // 1. 检测血条
+    let blood_detections = get_blood(image, &res_dir)?;
 
+    let mut full_detections = Vec::new();
+
+    for blood in blood_detections {
+        // 2. 计算 direction_area 的坐标和大小
+        let blood_width = blood.x2 - blood.x1;
+        let blood_height = blood.y2 - blood.y1;
+        let direction_size = blood_width;
+        let direction_center_x = (blood.x1 + blood.x2) / 2.0;
+        let direction_center_y = (blood.y1 + blood.y2) / 2.0 - 1.3 * blood_height;
+        let direction_x = direction_center_x - direction_size / 2.0;
+        let direction_y = direction_center_y - direction_size / 2.0;
+
+        let direction_area = image.crop_imm(
+            direction_x as u32,
+            direction_y as u32,
+            direction_size as u32,
+            direction_size as u32,
+        );
+
+        // 3. 计算 skill_ready_area 的坐标和大小
+        let skill_ready_y = direction_y - direction_size;
+        let skill_ready_area = image.crop_imm(
+            direction_x as u32,
+            skill_ready_y as u32,
+            direction_size as u32,
+            direction_size as u32,
+        );
+
+        // 3. 检测方向
+        let direction = get_direction(&direction_area, &res_dir)?;
+
+        // 4. 检测技能状态
+        let skill_ready = get_skill_ready(&skill_ready_area, &res_dir)?;
+
+        // 5. 收集所有检测结果
+        full_detections.push(FullDetection {
+            detection: blood,
+            direction,
+            skill_ready,
+        });
+    }
+
+    Ok(full_detections)
+}
 
 #[cfg(test)]
 mod tests {
@@ -341,7 +399,7 @@ mod tests {
 
     #[test] //测试ocr
     fn test_ocr() {
-        let image_path = "resources/input/ocr/11.jpg";
+        let image_path = "model/resources/input/ocr/11.jpg";
         println!("加载图片: {}", image_path);
 
         match open(image_path) {
@@ -375,7 +433,7 @@ mod tests {
                         // 输出检测结果
                         for detection in detections {
                             println!(
-                                "Label: {}, Score: {:.3}, Left: {}, Top: {}, Right: {}, Bottom: {}",
+                                "Label: {}, Score: {:.3}, x1: {}, y1: {}, x2: {}, y2: {}",
                                 detection.label, detection.score, detection.x1, detection.y1, detection.x2, detection.y2
                             );
                         }
