@@ -22,6 +22,8 @@
 //!                skill_ready: 技能状态
  
 
+pub mod ocr;
+
 use encoding::all::GBK;
 use encoding::{DecoderTrap, Encoding};
 use image:: DynamicImage;
@@ -61,7 +63,7 @@ pub struct OcrResult {
 }
 
 /// 获取模型路径
-fn get_model_path<P: AsRef<Path>>(res_dir: P, model_filename: &str) -> PathBuf {
+pub(crate) fn get_model_path<P: AsRef<Path>>(res_dir: P, model_filename: &str) -> PathBuf {
     let res_dir = res_dir.as_ref();
     res_dir.join("models").join(model_filename)
 }
