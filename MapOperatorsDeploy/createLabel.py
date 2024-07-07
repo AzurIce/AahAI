@@ -6,7 +6,6 @@ from tqdm import tqdm
 folder_path = 'test'
 image_path = folder_path + '/image'
 label_path = folder_path + '/label'
-counter = 1
 
 # 读取 CSV 文件到 DataFrame
 df = pd.read_csv('test/map_data.csv')
@@ -37,6 +36,3 @@ for filename in tqdm(os.listdir(image_path)):
         with open(result_file_path, 'w') as f:
             line = f"{index} {str(index_x)} {str(index_y)} 0.06 0.1475\n"
             f.write(line)
-
-        print(f"{counter} labels done")
-        counter += 1
